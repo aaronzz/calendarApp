@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect} from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -13,6 +13,7 @@ export default function Calendar() {
   const [birthdays, setBirthdays] = useState<ListItemProps[]>([]);
   const [searchString, setSearchString] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const cache = new Map();
   const MONTH = [
     "January",
     "February",
@@ -33,19 +34,24 @@ export default function Calendar() {
     let url = `https://api.wikimedia.org/feed/v1/wikipedia/en/onthisday/births/${
       month + 1
     }/${day}`;
-
+  
     const fetchData = async () => {
       try {
         setLoading(true);
         const response = await fetch(url);
         const json = await response.json();
+        cache.set(url, json.birthdays)
         setBirthdays(json.births);
         setLoading(false);
       } catch (error) {
         console.log("error", error);
       }
     };
-    fetchData();
+    if(cache.has(url)){
+      setBirthdays(cache.get(url));
+    }else{
+      fetchData();
+    }
   }, [selectDate]);
 
   const filteredList =
