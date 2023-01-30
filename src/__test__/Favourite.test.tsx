@@ -24,4 +24,16 @@ describe("Set local storage to test listItem cases", () => {
     expect(item2).toBeInTheDocument();
     expect(item3).toBeInTheDocument();
   });
+
+  it("data is not added into local storage", () => {
+    const mockJson = { "Jan 12": [], "Feb 16": ["test"] };
+    setLocalStorage(mockJson);
+    render(<Favourite />);
+    const title1 = screen.queryByText("Jan 12");
+    const title2 = screen.getByText(/Feb 16/i);
+    const item3 = screen.getByText(/test/i);
+    expect(title1).toBeNull();
+    expect(title2).toBeInTheDocument();
+    expect(item3).toBeInTheDocument();
+  });
 });

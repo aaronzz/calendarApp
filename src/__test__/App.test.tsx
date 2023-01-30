@@ -7,6 +7,7 @@ test("renders App page", () => {
   expect(linkElement).toBeInTheDocument();
   const homeButton = screen.getByTestId("layout-home");
   fireEvent.click(homeButton);
-  const birthText = screen.getByText(/Birthdays /i);
-  expect(birthText).toBeInTheDocument();
+  const searchInput = screen.getByTestId("searchInput");
+  expect(searchInput).toBeInTheDocument();
+  expect(searchInput).toHaveClass("searchInput");
 });

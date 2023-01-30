@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -9,11 +9,18 @@ import CircularProgress from "@mui/material/CircularProgress";
 import TextField from "@mui/material/TextField";
 import "../style/App.css";
 export default function Calendar() {
-  const [selectDate, setselectDate] = useState<Dayjs | null>(dayjs());
+  const [selectDate, setselectDate] = useState<Dayjs | null>(() => {
+    const selectDateString = localStorage.getItem("selectDate");
+    if (selectDateString !== null && selectDateString !== `undefined`) {
+      const dateFromString = dayjs(selectDateString);
+      return dateFromString;
+    } else {
+      return dayjs();
+    }
+  });
   const [birthdays, setBirthdays] = useState<ListItemProps[]>([]);
   const [searchString, setSearchString] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const cache = new Map();
   const MONTH = [
     "January",
     "February",
@@ -28,28 +35,33 @@ export default function Calendar() {
     "November",
     "December",
   ];
+
   useEffect(() => {
     const month = selectDate?.month() || 0;
     const day = selectDate?.date();
     let url = `https://api.wikimedia.org/feed/v1/wikipedia/en/onthisday/births/${
       month + 1
     }/${day}`;
-  
+    if (selectDate?.format()) {
+      localStorage.setItem("selectDate", selectDate?.format());
+    }
     const fetchData = async () => {
       try {
         setLoading(true);
         const response = await fetch(url);
         const json = await response.json();
-        cache.set(url, json.birthdays)
+        localStorage.setItem(url, JSON.stringify(json.births));
         setBirthdays(json.births);
         setLoading(false);
       } catch (error) {
         console.log("error", error);
       }
     };
-    if(cache.has(url)){
-      setBirthdays(cache.get(url));
-    }else{
+    const value = localStorage.getItem(url);
+    if (value !== "undefined" && value !== null) {
+      const cachedBirthdays: ListItemProps[] = JSON.parse(value);
+      setBirthdays(cachedBirthdays);
+    } else {
       fetchData();
     }
   }, [selectDate]);
@@ -68,17 +80,15 @@ export default function Calendar() {
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <CalendarPicker
             date={selectDate}
+            // disableHighlightToday={true}
             data-testid={`calendar-input`}
             onChange={(newValue) => {
               setselectDate(newValue);
             }}
           />
         </LocalizationProvider>
-        <p className="dateLabel">{`Birthdays on ${
-          MONTH[selectDate?.month() || 0]
-        } ${selectDate?.date()}`}</p>
         <div className="searchPanel">
-          <div className="searchInput">
+          <div className="searchInput" data-testid={"searchInput"}>
             <label
               style={{
                 marginRight: "10px",
@@ -105,6 +115,12 @@ export default function Calendar() {
 
       {!loading && (
         <div className="rightPanel">
+          <p
+            className="dateLabel"
+            data-testid={`calendarDateLabel`}
+          >{`Birthdays on ${
+            MONTH[selectDate?.month() || 0]
+          } ${selectDate?.date()}`}</p>
           {filteredList.length > 0 && (
             <DisplayList
               items={filteredList}

@@ -9,17 +9,20 @@ export default function Favourite() {
       >
         Favourite Birthdays
       </label>
-      {favouriteList && Object.keys(favouriteList).sort((a:string, b:string) =>Date.parse(a)- Date.parse(b)).map((item, index) => {
-        if (item && favouriteList[item].length > 0) {
-          return (
-            <AccordingItem
-              title={item}
-              list={favouriteList[item]}
-              key={index}
-            />
-          );
-        }
-      })}
+      {favouriteList &&
+        Object.keys(favouriteList)
+          .sort((a: string, b: string) => Date.parse(a) - Date.parse(b))
+          .map((item, index) => {
+            if (item && favouriteList[item].length > 0) {
+              return (
+                <AccordingItem
+                  title={item}
+                  list={favouriteList[item]}
+                  key={index}
+                />
+              );
+            }
+          })}
     </>
   );
 }
