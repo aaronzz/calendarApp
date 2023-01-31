@@ -1,11 +1,9 @@
 export interface ListProps {
   items: ListItemProps[];
-  dateString: string;
 }
 
 export interface Itemprops {
   item: ListItemProps;
-  dateString: string;
 }
 export interface ListItemProps {
   text: string;

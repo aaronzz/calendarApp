@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import DisplayListItem from "../component/DisplayListItem";
 import * as Util from "../util/Util";
+import { DateContext } from "../pages/Calendar";
 const listItemProps1 = {
   item: {
     text: "hello",
@@ -29,10 +30,9 @@ describe("Set local storage to test listItem cases", () => {
     setLocalStorage(mockJson);
     const spy = jest.spyOn(Util, "removeFavourite");
     render(
-      <DisplayListItem
-        item={listItemProps1.item}
-        dateString={listItemProps1.dateString}
-      />
+      <DateContext.Provider value={listItemProps1.dateString}>
+        <DisplayListItem item={listItemProps1.item} />
+      </DateContext.Provider>
     );
     const title = screen.getByText(/hello/i);
     expect(title).toBeInTheDocument();
@@ -48,10 +48,9 @@ describe("Set local storage to test listItem cases", () => {
     setLocalStorage(mockJson);
     const spy = jest.spyOn(Util, "addFavourite");
     render(
-      <DisplayListItem
-        item={listItemProps2.item}
-        dateString={listItemProps2.dateString}
-      />
+      <DateContext.Provider value={listItemProps2.dateString}>
+        <DisplayListItem item={listItemProps2.item} />
+      </DateContext.Provider>
     );
     const title = screen.getByText(/world/i);
     expect(title).toBeInTheDocument();

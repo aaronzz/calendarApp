@@ -1,16 +1,19 @@
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import ListItemText from "@mui/material/ListItemText";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import { Itemprops } from "../model/model";
 import IconButton from "@mui/material/IconButton";
 import { addFavourite, removeFavourite, isFavouriteExist } from "../util/Util";
+import { DateContext } from "../pages/Calendar";
 export default function InsetList(props: Itemprops) {
   const [isFavourite, setFavourite] = useState<boolean>(false);
+  const dateString = useContext(DateContext);
+
   useEffect(() => {
-    const favouriteResult = isFavouriteExist(props.dateString, props.item.text);
+    const favouriteResult = isFavouriteExist(dateString, props.item.text);
     setFavourite(favouriteResult);
   }, [props.item]);
 
@@ -22,9 +25,9 @@ export default function InsetList(props: Itemprops) {
         data-testid={`favourite-star-button`}
         onClick={() => {
           if (!isFavourite) {
-            addFavourite(props.dateString, props.item.text);
+            addFavourite(dateString, props.item.text);
           } else {
-            removeFavourite(props.dateString, props.item.text);
+            removeFavourite(dateString, props.item.text);
           }
           setFavourite(!isFavourite);
         }}

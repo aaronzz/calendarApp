@@ -8,13 +8,7 @@ export default function DisplayList(props: ListProps) {
       aria-label="contacts"
     >
       {props?.items.map((item: ListItemProps, index: number) => {
-        return (
-          <DisplayListItem
-            item={item}
-            key={index}
-            dateString={props.dateString}
-          />
-        );
+        return <DisplayListItem item={item} key={index} />;
       })}
     </List>
   );

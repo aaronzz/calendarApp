@@ -8,6 +8,8 @@ it("renders DisplayList with mock data", () => {
       isFavourite: false,
     },
   ];
-  render(<DisplayList items={accordingProps} dateString={"Jan 21"} />);
+  render(<DisplayList items={accordingProps}/>);
   const title = screen.getByText(/abc/i);
+  expect(title).toBeInTheDocument();
+
 });
